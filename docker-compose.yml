@@ -37,8 +37,6 @@ services:
     ports:
       - "2181:2181"
     restart: always
-    volumes:
-      - ./zk-data:/data
     environment:
       JVMFLAGS: "-Xms1024m -Xmx2048m"
       ZOO_ENABLE_AUTH: "false"
@@ -76,4 +74,3 @@ services:
 
 volumes:
   postgres_data:
-  kafka_data:
