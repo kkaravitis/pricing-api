@@ -539,5 +539,7 @@ mvn test
 
 ## License
 
-This project is licensed under the **Apache License 2.0**.  
-See the `LICENSE` file for details.
+This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0)**.  
+You are free to use, modify, and share the code **for non-commercial purposes only**.  
+See the full license text here:  
+[https://creativecommons.org/licenses/by-nc/4.0/](https://creativecommons.org/licenses/by-nc/4.0/)
