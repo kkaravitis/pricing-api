@@ -1,5 +1,7 @@
-# Pricing API
+![Project Status](https://img.shields.io/badge/status-WIP-yellow.svg)
 
+**Work in Progress**
+# Pricing API
 **Pricing API** is the intermediate Spring Boot service that connects the demo’s Angular UI with the Flink streaming job.  
 It exposes REST endpoints for sending **events** (clicks, orders, inventory, business rules), persists **pricing results** from Kafka, broadcasts them over **WebSocket/STOMP**, and manages a simple **Competitor Prices** CRUD backed by PostgreSQL.
 
