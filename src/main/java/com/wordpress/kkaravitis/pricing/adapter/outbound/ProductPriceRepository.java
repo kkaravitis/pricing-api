@@ -39,7 +39,6 @@ public class ProductPriceRepository {
               ? DSL.noCondition()
               : PRODUCT_PRICE_RESULTS.PRODUCT_ID.eq(productId);
 
-        // Inner derived table: compute prev_price and rn
         Table<?> t = dsl
               .select(
                     PRODUCT_PRICE_RESULTS.PRODUCT_ID.as("product_id"),
@@ -63,7 +62,6 @@ public class ProductPriceRepository {
               .where(cond)
               .asTable("t");
 
-        // Fields from derived table
         Field<String>          productIdF = t.field("product_id", String.class);
         Field<Long>            idF        = t.field("id", Long.class);
         Field<LocalDateTime>   tsF        = t.field("timestamp", LocalDateTime.class);
@@ -71,7 +69,6 @@ public class ProductPriceRepository {
         Field<BigDecimal>      prevF      = t.field("prev_price", BigDecimal.class);
         Field<Integer>         rnF        = t.field("rn", Integer.class);
 
-        // Outer computed fields (camelCase for POJO)
         Field<BigDecimal> previousPrice =
               prevF.as("previousPrice");
 
@@ -88,7 +85,6 @@ public class ProductPriceRepository {
                     .otherwise(DSL.inline("same"))
                     .as("priceChangeLabel");
 
-        // Final query → coerce to ResultQuery<Record> to satisfy the method’s signature
         return dsl
               .select(productIdF.as("product_id"),
                     idF.as("id"),
