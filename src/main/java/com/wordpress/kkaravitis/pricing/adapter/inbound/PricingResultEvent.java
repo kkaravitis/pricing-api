@@ -6,11 +6,10 @@
  * See the LICENSE file in the project root or visit:
  * https://creativecommons.org/licenses/by-nc/4.0/
  */
+package com.wordpress.kkaravitis.pricing.adapter.inbound;
 
-package com.wordpress.kkaravitis.pricing.domain;
-
+import com.wordpress.kkaravitis.pricing.domain.Money;
 import java.io.Serializable;
-import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +17,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class Money implements Serializable {
-    private BigDecimal amount;
-    private String currency;
+@NoArgsConstructor
+public class PricingResultEvent implements Serializable {
+    private String productId;
+    private String productName;
+    private Money newPrice;
+    private Long timestamp;
 }

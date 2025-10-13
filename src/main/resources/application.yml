@@ -34,3 +34,5 @@ spring:
         spring.json.trusted.packages: '*'
 
 
+
+

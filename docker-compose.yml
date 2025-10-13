@@ -63,10 +63,29 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_MAX_TIMEOUT_MS: 1800000
     depends_on:
       - zookeeper
     networks:
       - pricing-net
+    command:
+      - bash
+      - -lc
+      - >
+        set -euo pipefail;
+        /etc/confluent/docker/run & pid=$$!;
+        echo "Waiting for Kafka...";
+        for i in $$(seq 1 60); do
+          if kafka-topics --bootstrap-server localhost:9092 --list >/dev/null 2>&1; then
+            echo "Kafka is up."; break; fi;
+          echo "  not yet ($$i/60)"; sleep 2;
+        done;
+        for t in click-event order-event rule-event inventory-event pricing-results ml-model pricing-alerts; do
+          kafka-topics --bootstrap-server localhost:9092 \
+            --create --if-not-exists --topic "$$t" --partitions 1 --replication-factor 1 || true;
+        done;
+        echo "Kafka topics ensured.";
+        wait "$$pid";
 
   kafdrop:
     image: obsidiandynamics/kafdrop:3.27.0
@@ -86,7 +105,9 @@ services:
     image: pricing-api:latest
     ports:
       - "8080:8080"
+      - "5005:5005"
     environment:
+      - JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/pricing_db
       - SPRING_DATASOURCE_USERNAME=pricing_user
       - SPRING_DATASOURCE_PASSWORD=pricing_pass
@@ -96,6 +117,29 @@ services:
       - postgres
     networks:
       - pricing-net
+
+#  topic-init:
+#    image: confluentinc/cp-kafka:7.1.2
+#    container_name: topic-init
+#    entrypoint: ["/bin/bash","-lc"]
+#    command: >
+#      "
+#      # idempotent creates (won't fail if topic exists)
+#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic click-event --partitions 1 --replication-factor 1;
+#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic order-event --partitions 1 --replication-factor 1;
+#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic rule-event --partitions 1 --replication-factor 1;
+#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic inventory-event --partitions 1 --replication-factor 1;
+#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic pricing-results --partitions 1 --replication-factor 1;
+#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic ml-model --partitions 1 --replication-factor 1;
+#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic pricing-alerts --partitions 1 --replication-factor 1;
+#
+#      echo 'Kafka topics ensured.';
+#      sleep 2;
+#      "
+#    depends_on:
+#      - kafka
+#    networks:
+#      - pricing-net
 
 volumes:
   postgres_data:

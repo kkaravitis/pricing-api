@@ -130,75 +130,75 @@
                     </toolchains>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.flywaydb</groupId>
-                <artifactId>flyway-maven-plugin</artifactId>
-                <version>9.22.3</version>
+<!--            <plugin>-->
+<!--                <groupId>org.flywaydb</groupId>-->
+<!--                <artifactId>flyway-maven-plugin</artifactId>-->
+<!--                <version>9.22.3</version>-->
 
-                <configuration>
-                    <url>${env.DB_URL}</url>
-                    <user>${env.DB_USERNAME}</user>
-                    <password>${env.DB_PASSWORD}</password>
-                    <locations>
-                        <location>filesystem:src/main/resources/db/migration</location>
-                    </locations>
-                </configuration>
-            </plugin>
+<!--                <configuration>-->
+<!--                    <url>${env.DB_URL}</url>-->
+<!--                    <user>${env.DB_USERNAME}</user>-->
+<!--                    <password>${env.DB_PASSWORD}</password>-->
+<!--                    <locations>-->
+<!--                        <location>filesystem:src/main/resources/db/migration</location>-->
+<!--                    </locations>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 
             <!-- Jooq Codegen -->
-            <plugin>
-                <groupId>org.jooq</groupId>
-                <artifactId>jooq-codegen-maven</artifactId>
-                <version>${jooq.version}</version>
-                <executions>
-                    <execution>
-                        <id>generate-jooq</id>
-                        <phase>generate-sources</phase>
-                        <goals><goal>generate</goal></goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <jdbc>
-                        <driver>org.postgresql.Driver</driver>
-                        <url>${env.DB_URL}</url>
-                        <user>${env.DB_USERNAME}</user>
-                        <password>${env.DB_PASSWORD}</password>
-                    </jdbc>
-                    <generator>
-                        <database>
-                            <name>org.jooq.meta.postgres.PostgresDatabase</name>
-                            <inputSchema>public</inputSchema>
-                        </database>
-                        <generate>
-                            <pojos>true</pojos>
-                            <daos>true</daos>
-                        </generate>
-                        <target>
-                            <packageName>com.wordpress.kkaravitis.pricing.jooq</packageName>
-                            <directory>target/generated-sources/jooq</directory>
-                        </target>
-                    </generator>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.jooq</groupId>-->
+<!--                <artifactId>jooq-codegen-maven</artifactId>-->
+<!--                <version>${jooq.version}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>generate-jooq</id>-->
+<!--                        <phase>generate-sources</phase>-->
+<!--                        <goals><goal>generate</goal></goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <jdbc>-->
+<!--                        <driver>org.postgresql.Driver</driver>-->
+<!--                        <url>${env.DB_URL}</url>-->
+<!--                        <user>${env.DB_USERNAME}</user>-->
+<!--                        <password>${env.DB_PASSWORD}</password>-->
+<!--                    </jdbc>-->
+<!--                    <generator>-->
+<!--                        <database>-->
+<!--                            <name>org.jooq.meta.postgres.PostgresDatabase</name>-->
+<!--                            <inputSchema>public</inputSchema>-->
+<!--                        </database>-->
+<!--                        <generate>-->
+<!--                            <pojos>true</pojos>-->
+<!--                            <daos>true</daos>-->
+<!--                        </generate>-->
+<!--                        <target>-->
+<!--                            <packageName>com.wordpress.kkaravitis.pricing.jooq</packageName>-->
+<!--                            <directory>target/generated-sources/jooq</directory>-->
+<!--                        </target>-->
+<!--                    </generator>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 
             <!-- Add generated-sources to classpath -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <id>add-source</id>
-                        <phase>generate-sources</phase>
-                        <goals><goal>add-source</goal></goals>
-                        <configuration>
-                            <sources>
-                                <source>target/generated-sources/jooq</source>
-                            </sources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.codehaus.mojo</groupId>-->
+<!--                <artifactId>build-helper-maven-plugin</artifactId>-->
+<!--                <version>3.3.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>add-source</id>-->
+<!--                        <phase>generate-sources</phase>-->
+<!--                        <goals><goal>add-source</goal></goals>-->
+<!--                        <configuration>-->
+<!--                            <sources>-->
+<!--                                <source>target/generated-sources/jooq</source>-->
+<!--                            </sources>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
 
             <!-- Spring Boot Plugin -->
             <plugin>
@@ -220,4 +220,93 @@
             </plugin>
         </plugins>
     </build>
+    <!-- ============================================== -->
+    <!-- Optional DB-related profiles (off by default)  -->
+    <!-- ============================================== -->
+    <profiles>
+
+        <!-- Run Flyway migrations manually -->
+        <profile>
+            <id>db</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.flywaydb</groupId>
+                        <artifactId>flyway-maven-plugin</artifactId>
+                        <version>9.22.3</version>
+                        <configuration>
+                            <url>${env.DB_URL}</url>
+                            <user>${env.DB_USERNAME}</user>
+                            <password>${env.DB_PASSWORD}</password>
+                            <locations>
+                                <location>filesystem:src/main/resources/db/migration</location>
+                            </locations>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Generate jOOQ sources manually -->
+        <profile>
+            <id>codegen</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-codegen-maven</artifactId>
+                        <version>${jooq.version}</version>
+                        <executions>
+                            <execution>
+                                <id>generate-jooq</id>
+                                <phase>generate-sources</phase>
+                                <goals><goal>generate</goal></goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <jdbc>
+                                <driver>org.postgresql.Driver</driver>
+                                <url>${env.DB_URL}</url>
+                                <user>${env.DB_USERNAME}</user>
+                                <password>${env.DB_PASSWORD}</password>
+                            </jdbc>
+                            <generator>
+                                <database>
+                                    <name>org.jooq.meta.postgres.PostgresDatabase</name>
+                                    <inputSchema>public</inputSchema>
+                                </database>
+                                <generate>
+                                    <pojos>true</pojos>
+                                    <daos>true</daos>
+                                </generate>
+                                <target>
+                                    <packageName>com.wordpress.kkaravitis.pricing.jooq</packageName>
+                                    <directory>target/generated-sources/jooq</directory>
+                                </target>
+                            </generator>
+                        </configuration>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>3.3.0</version>
+                        <executions>
+                            <execution>
+                                <id>add-source</id>
+                                <phase>generate-sources</phase>
+                                <goals><goal>add-source</goal></goals>
+                                <configuration>
+                                    <sources>
+                                        <source>target/generated-sources/jooq</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
 </project>
