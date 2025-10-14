@@ -34,6 +34,8 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     depends_on:
       - postgres
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
     networks:
       - pricing-net
 
@@ -47,6 +49,9 @@ services:
       ZOO_ENABLE_AUTH: "false"
     networks:
       - pricing-net
+    volumes:
+      - zookeeper-data:/data
+      - zookeeper-datalog:/datalog
 
   kafka:
     image: confluentinc/cp-kafka:7.1.2
@@ -86,6 +91,8 @@ services:
         done;
         echo "Kafka topics ensured.";
         wait "$$pid";
+    volumes:
+      - kafka-data:/var/lib/kafka/data
 
   kafdrop:
     image: obsidiandynamics/kafdrop:3.27.0
@@ -118,32 +125,21 @@ services:
     networks:
       - pricing-net
 
-#  topic-init:
-#    image: confluentinc/cp-kafka:7.1.2
-#    container_name: topic-init
-#    entrypoint: ["/bin/bash","-lc"]
-#    command: >
-#      "
-#      # idempotent creates (won't fail if topic exists)
-#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic click-event --partitions 1 --replication-factor 1;
-#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic order-event --partitions 1 --replication-factor 1;
-#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic rule-event --partitions 1 --replication-factor 1;
-#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic inventory-event --partitions 1 --replication-factor 1;
-#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic pricing-results --partitions 1 --replication-factor 1;
-#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic ml-model --partitions 1 --replication-factor 1;
-#      kafka-topics --bootstrap-server kafka:19092 --create --if-not-exists --topic pricing-alerts --partitions 1 --replication-factor 1;
-#
-#      echo 'Kafka topics ensured.';
-#      sleep 2;
-#      "
-#    depends_on:
-#      - kafka
-#    networks:
-#      - pricing-net
-
 volumes:
   postgres_data:
+    driver: local
+  pgadmin-data:
+    driver: local
+  zookeeper-data:
+    driver: local
+  zookeeper-datalog:
+    driver: local
+  kafka-data:
+    driver: local
+
+
 
 networks:
   pricing-net:
     external: true
+

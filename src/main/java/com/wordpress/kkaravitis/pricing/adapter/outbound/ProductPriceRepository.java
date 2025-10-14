@@ -50,11 +50,12 @@ public class ProductPriceRepository {
 
         Table<?> t = dsl
               .select(
+                    PRODUCT_PRICE_RESULTS.PRODUCT_NAME.as("product_name"),
                     PRODUCT_PRICE_RESULTS.PRODUCT_ID.as("product_id"),
                     PRODUCT_PRICE_RESULTS.ID.as("id"),
                     PRODUCT_PRICE_RESULTS.TIMESTAMP.as("timestamp"),
                     PRODUCT_PRICE_RESULTS.PRICE.as("price"),
-                    DSL.lag(PRODUCT_PRICE_RESULTS.PRICE)
+                    DSL.lead(PRODUCT_PRICE_RESULTS.PRICE)
                           .over()
                           .partitionBy(PRODUCT_PRICE_RESULTS.PRODUCT_ID)
                           .orderBy(PRODUCT_PRICE_RESULTS.TIMESTAMP.desc(),
@@ -72,6 +73,7 @@ public class ProductPriceRepository {
               .asTable("t");
 
         Field<String>          productIdF = t.field("product_id", String.class);
+        Field<String>          productNameF = t.field("product_name", String.class);
         Field<Long>            idF        = t.field("id", Long.class);
         Field<LocalDateTime>   tsF        = t.field("timestamp", LocalDateTime.class);
         Field<BigDecimal>      priceF     = t.field("price", BigDecimal.class);
@@ -84,7 +86,7 @@ public class ProductPriceRepository {
         Field<BigDecimal> priceChangePercent =
               DSL.when(prevF.isNotNull().and(prevF.ne(BigDecimal.ZERO)),
                           DSL.round(priceF.minus(prevF).div(prevF).mul(BigDecimal.valueOf(100)), 2))
-                    .otherwise((BigDecimal) null)
+                    .otherwise(BigDecimal.ZERO)
                     .as("priceChangePercent");
 
         Field<String> priceChangeLabel =
@@ -96,12 +98,13 @@ public class ProductPriceRepository {
 
         return dsl
               .select(productIdF.as("product_id"),
+                    productNameF.as("productName"),
                     idF.as("id"),
                     tsF.as("timestamp"),
                     priceF.as("price"),
-                    previousPrice,
-                    priceChangePercent,
-                    priceChangeLabel)
+                    previousPrice.as("previousPrice"),
+                    priceChangePercent.as("priceChangePercent"),
+                    priceChangeLabel.as("priceChangeLabel"))
               .from(t)
               .where(rnF.eq(1))
               .orderBy(productIdF.asc());
