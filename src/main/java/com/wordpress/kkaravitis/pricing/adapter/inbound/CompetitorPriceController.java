@@ -9,10 +9,16 @@
 
 package com.wordpress.kkaravitis.pricing.adapter.inbound;
 
+import com.wordpress.kkaravitis.pricing.domain.Money;
 import com.wordpress.kkaravitis.pricing.domain.competitor.CompetitorPrice;
 import com.wordpress.kkaravitis.pricing.domain.competitor.CompetitorPriceDto;
 import com.wordpress.kkaravitis.pricing.domain.competitor.CompetitorPriceService;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -41,9 +47,23 @@ public class CompetitorPriceController {
     }
 
     @GetMapping(value = "/{productId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CompetitorPrice> getCompetitorPrice(@PathVariable String productId) {
-        CompetitorPrice payload = service.findCompetitorPrice(productId);
-        return payload == null ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(payload);
+    public ResponseEntity<CompetitorPriceResponse> getCompetitorPrice(@PathVariable String productId) {
+        CompetitorPrice competitorPrice = service.findCompetitorPrice(productId);
+
+        Optional<CompetitorPriceResponse> optional = Optional.ofNullable(competitorPrice)
+              .map(CompetitorPrice::price)
+              .map(Money::getAmount)
+              .map(BigDecimal::doubleValue)
+              .map(CompetitorPriceResponse::new);
+
+        return optional.isEmpty() ? ResponseEntity.notFound().build()
+              : ResponseEntity.ok().body(optional.get());
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class CompetitorPriceResponse implements Serializable {
+        private Double price;
     }
 
 
