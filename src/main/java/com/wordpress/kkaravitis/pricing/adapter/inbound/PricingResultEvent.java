@@ -24,4 +24,7 @@ public class PricingResultEvent implements Serializable {
     private String productName;
     private Money newPrice;
     private Long timestamp;
+    private Double inventoryLevel;
+    private Double currentDemand;
+
 }

@@ -25,7 +25,6 @@ public class PricingResult {
       String currency;
       LocalDateTime timestamp;
 
-      // Optional enrichments
       Double demandMetric;
       Double competitorPrice;
       Double inventoryLevel;

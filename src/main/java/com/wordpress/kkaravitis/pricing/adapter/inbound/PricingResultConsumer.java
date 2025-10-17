@@ -41,6 +41,8 @@ public class PricingResultConsumer {
               .timestamp(incoming.getTimestamp() != null ? LocalDateTime
                     .ofInstant(Instant.ofEpochMilli(incoming.getTimestamp()),
                           ZoneOffset.UTC) : LocalDateTime.now())
+              .inventoryLevel(incoming.getInventoryLevel())
+              .demandMetric(incoming.getCurrentDemand())
               .build();
 
         log.info("Storing pricing result for product [{}]", enriched.getProductId());

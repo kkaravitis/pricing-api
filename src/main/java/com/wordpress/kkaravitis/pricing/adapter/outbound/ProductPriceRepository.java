@@ -55,6 +55,7 @@ public class ProductPriceRepository {
                     PRODUCT_PRICE_RESULTS.ID.as("id"),
                     PRODUCT_PRICE_RESULTS.TIMESTAMP.as("timestamp"),
                     PRODUCT_PRICE_RESULTS.PRICE.as("price"),
+
                     DSL.lead(PRODUCT_PRICE_RESULTS.PRICE)
                           .over()
                           .partitionBy(PRODUCT_PRICE_RESULTS.PRODUCT_ID)
@@ -66,7 +67,10 @@ public class ProductPriceRepository {
                           .partitionBy(PRODUCT_PRICE_RESULTS.PRODUCT_ID)
                           .orderBy(PRODUCT_PRICE_RESULTS.TIMESTAMP.desc(),
                                 PRODUCT_PRICE_RESULTS.ID.desc())
-                          .as("rn")
+                          .as("rn"),
+
+                    PRODUCT_PRICE_RESULTS.INVENTORY_LEVEL.as("inventory_level"),
+                    PRODUCT_PRICE_RESULTS.DEMAND_METRIC.as("demand_metric")
               )
               .from(PRODUCT_PRICE_RESULTS)
               .where(cond)
@@ -79,6 +83,8 @@ public class ProductPriceRepository {
         Field<BigDecimal>      priceF     = t.field("price", BigDecimal.class);
         Field<BigDecimal>      prevF      = t.field("prev_price", BigDecimal.class);
         Field<Integer>         rnF        = t.field("rn", Integer.class);
+        Field<Double>          invl = t.field("inventory_level", Double.class);
+        Field<Double>          demand = t.field("demand_metric", Double.class);
 
         Field<BigDecimal> previousPrice =
               prevF.as("previousPrice");
@@ -104,7 +110,10 @@ public class ProductPriceRepository {
                     priceF.as("price"),
                     previousPrice.as("previousPrice"),
                     priceChangePercent.as("priceChangePercent"),
-                    priceChangeLabel.as("priceChangeLabel"))
+                    priceChangeLabel.as("priceChangeLabel"),
+                    invl.as("inventoryLevel"),
+                    demand.as("demandMetric")
+                    )
               .from(t)
               .where(rnF.eq(1))
               .orderBy(productIdF.asc());
