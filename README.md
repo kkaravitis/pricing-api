@@ -413,7 +413,7 @@ ENTRYPOINT ["sh","-c","java $JAVA_OPTS -jar /app/app.jar"]
 Build & run:
 ```bash
 mvn -DskipTests package
-docker build -t pricing-api:0.0.1 .
+docker build -t pricing-api .
 docker run --rm -p 8080:8080 \
   -e DB_URL='jdbc:postgresql://host.docker.internal:5432/pricing_db' \
   -e DB_USERNAME='pricing_user' \
@@ -430,81 +430,13 @@ Optional tuning:
 ---
 
 ## docker-compose
-
-This compose file spins up **Postgres**, **Kafka** (with Zookeeper), **Kafdrop**, and **pricing-api**.
-
-```yaml
-version: "3.8"
-services:
-  postgres:
-    image: postgres:16
-    environment:
-      POSTGRES_DB: pricing_db
-      POSTGRES_USER: pricing_user
-      POSTGRES_PASSWORD: pricing_pass
-    ports: ["5432:5432"]
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U pricing_user -d pricing_db || exit 1"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.6.0
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports: ["2181:2181"]
-
-  kafka:
-    image: confluentinc/cp-kafka:7.6.0
-    depends_on: [zookeeper]
-    ports:
-      - "9092:9092"
-      - "29092:29092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-
-  kafdrop:
-    image: obsidiandynamics/kafdrop:latest
-    depends_on: [kafka]
-    ports: ["9001:9001"]
-    environment:
-      KAFKA_BROKERCONNECT: "kafka:9092"
-      JVM_OPTS: "-Xms32M -Xmx64M"
-      SERVER_SERVLET_CONTEXTPATH: "/"
-
-  pricing-api:
-    image: pricing-api:0.0.1
-    depends_on:
-      postgres:
-        condition: service_healthy
-      kafka:
-        condition: service_started
-    environment:
-      DB_URL: jdbc:postgresql://postgres:5432/pricing_db
-      DB_USERNAME: pricing_user
-      DB_PASSWORD: pricing_pass
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
-    ports: ["8080:8080"]
-
-volumes:
-  pgdata: {}
-```
-
-Usage:
+First of all create the network pricing-net
 ```bash
-docker compose up -d
-# Kafdrop:  http://localhost:9001
-# API:      http://localhost:8080
+docker network create pricing-net
+```
+Then you can run all the containers by 
+```bash
+docker-compose up -d
 ```
 
 ---
