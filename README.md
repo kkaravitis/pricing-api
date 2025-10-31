@@ -9,10 +9,10 @@ It exposes REST endpoints for sending **events** (clicks, orders, inventory, bus
 
 ## Table of contents
 
+- [Quick Start](#quick-start)
 - [Architecture](#architecture)
 - [Main features](#main-features)
 - [Tech stack](#tech-stack)
-- [Project layout](#project-layout)
 - [REST API](#rest-api)
     - [Business/behavioral events → Kafka](#businessbehavioral-events--kafka)
     - [Query latest pricing results](#query-latest-pricing-results)
@@ -29,6 +29,28 @@ It exposes REST endpoints for sending **events** (clicks, orders, inventory, bus
 - [License](#license)
 
 ---
+
+## Quick start
+
+Build the maven artifact by executing:
+```bash
+mvn clean install
+```
+
+Build the docker image by executing
+```bash
+docker build . -t priicing-api:latest
+```
+
+Create the pricing-net network
+```bash
+docker network create pricing-net
+```
+
+Run all the infrastructure services and the pricing-api application
+```bash
+docker-compose up -d
+```
 
 ## Architecture
 
@@ -66,49 +88,6 @@ Angular UI  ──(REST)──►  Pricing API  ──(Kafka)──►  Flink pr
 - **PostgreSQL**, **Flyway** (migrations), **jOOQ** (type-safe SQL)
 - **Apache Kafka** (Spring Kafka) + **Kafdrop** (UI)
 - **Docker** & **docker-compose**
-
----
-
-## Project layout
-
-```
-pricing-api/
-├─ src/main/java/com/wordpress/kkaravitis/pricing/
-│  ├─ PricingApiApplication.java
-│  ├─ adapter/inbound/
-│  │  ├─ PricingController.java                # REST for events & queries
-│  │  ├─ CompetitorPriceController.java        # REST for competitor prices
-│  │  └─ PricingResultConsumer.java            # Kafka consumer for pricing-results
-│  ├─ adapter/outbound/
-│  │  ├─ EventPublisher.java                   # Publishes events to Kafka
-│  │  ├─ ProductPriceRepository.java           # Latest price + change queries (jOOQ)
-│  │  ├─ PriceResultRepository.java            # Persist pricing results (idempotent)
-│  │  ├─ PricingWebSocketPublisher.java        # Push results via STOMP
-│  │  └─ TopicsData.java                       # Binds topic names from config
-│  ├─ config/
-│  │  ├─ KafkaProducerConfig.java
-│  │  ├─ WebConfig.java                        # CORS *
-│  │  └─ WebSocketConfig.java                  # /ws + /stream
-│  ├─ domain/
-│  │  ├─ Money.java
-│  │  ├─ PriceAdvisorService.java              # Orchestration across adapters/repos
-│  │  ├─ PricingResult.java
-│  │  ├─ ProductPriceResultWithChange.java
-│  │  ├─ events/ (ClickEvent, OrderEvent, InventoryLevelEvent, BusinessRuleEvent, PriceRule)
-│  │  └─ competitor/ (Repository/Service/DTOs)
-│  └─ ...
-├─ src/main/resources/
-│  ├─ application.yml                          # topics, datasource, kafka, jooq
-│  └─ db/migration/
-│     ├─ V1__init.sql                          # product_price_results
-│     └─ V2__create_competitor_price.sql       # competitor_price
-├─ Dockerfile
-├─ docker-compose.yml
-├─ pom.xml
-└─ README.md
-```
-
-\* CORS is relaxed for the demo.
 
 ---
 
@@ -368,10 +347,7 @@ spring:
 ### Prerequisites
 - JDK 21
 - Maven 3.9+
-- Docker (optional but recommended for infra)
-
-### Start a local Postgres & Kafka (optional)
-Use the provided `docker-compose.yml` (see below) or your own infra.
+- Docker
 
 ### Migrations & jOOQ (when needed)
 ```bash

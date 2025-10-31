@@ -28,5 +28,5 @@ public class PricingResult {
       Double demandMetric;
       Double competitorPrice;
       Double inventoryLevel;
-      Double modelPrediction;
+      BigDecimal modelPrediction;
 }

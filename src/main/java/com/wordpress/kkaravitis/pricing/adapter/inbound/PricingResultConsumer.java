@@ -43,6 +43,7 @@ public class PricingResultConsumer {
                           ZoneOffset.UTC) : LocalDateTime.now())
               .inventoryLevel(incoming.getInventoryLevel())
               .demandMetric(incoming.getCurrentDemand())
+              .modelPrediction(incoming.getModelPrediction().getAmount())
               .build();
 
         log.info("Storing pricing result for product [{}]", enriched.getProductId());

@@ -37,7 +37,7 @@ private final static ObjectMapper objectMapper = new ObjectMapper();
               .demandMetric(0.85)
               .competitorPrice(1050.00)
               .inventoryLevel(23.0)
-              .modelPrediction(1100.00)
+              .modelPrediction(new BigDecimal(1100.00))
               .build();
 
         // Serialize to JSON

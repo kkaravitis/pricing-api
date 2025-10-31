@@ -192,14 +192,14 @@ public class ProductPriceResultsDao extends DAOImpl<ProductPriceResultsRecord, c
      * Fetch records that have <code>model_prediction BETWEEN lowerInclusive AND
      * upperInclusive</code>
      */
-    public List<com.wordpress.kkaravitis.pricing.jooq.tables.pojos.ProductPriceResults> fetchRangeOfModelPrediction(Double lowerInclusive, Double upperInclusive) {
+    public List<com.wordpress.kkaravitis.pricing.jooq.tables.pojos.ProductPriceResults> fetchRangeOfModelPrediction(BigDecimal lowerInclusive, BigDecimal upperInclusive) {
         return fetchRange(ProductPriceResults.PRODUCT_PRICE_RESULTS.MODEL_PREDICTION, lowerInclusive, upperInclusive);
     }
 
     /**
      * Fetch records that have <code>model_prediction IN (values)</code>
      */
-    public List<com.wordpress.kkaravitis.pricing.jooq.tables.pojos.ProductPriceResults> fetchByModelPrediction(Double... values) {
+    public List<com.wordpress.kkaravitis.pricing.jooq.tables.pojos.ProductPriceResults> fetchByModelPrediction(BigDecimal... values) {
         return fetch(ProductPriceResults.PRODUCT_PRICE_RESULTS.MODEL_PREDICTION, values);
     }
 }

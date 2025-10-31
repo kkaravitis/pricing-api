@@ -24,7 +24,7 @@ public class ProductPriceResultWithChange {
     private Double demandMetric;
     private Double competitorPrice;
     private Double inventoryLevel;
-    private Double modelPrediction;
+    private BigDecimal modelPrediction;
 
     private BigDecimal previousPrice;
     private BigDecimal priceChangePercent;

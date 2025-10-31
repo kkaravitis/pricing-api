@@ -11,7 +11,7 @@ CREATE TABLE product_price_results (
     demand_metric DOUBLE PRECISION,
     competitor_price DOUBLE PRECISION,
     inventory_level DOUBLE PRECISION,
-    model_prediction DOUBLE PRECISION,
+    model_prediction NUMERIC(12, 2) NOT NULL,
 
     -- Soft rule: Avoid same timestamp per product per tenant
     CONSTRAINT uq_product_time UNIQUE (product_id, timestamp)

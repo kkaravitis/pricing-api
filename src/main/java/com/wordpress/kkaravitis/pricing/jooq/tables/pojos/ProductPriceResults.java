@@ -26,7 +26,7 @@ public class ProductPriceResults implements Serializable {
     private Double demandMetric;
     private Double competitorPrice;
     private Double inventoryLevel;
-    private Double modelPrediction;
+    private BigDecimal modelPrediction;
 
     public ProductPriceResults() {}
 
@@ -53,7 +53,7 @@ public class ProductPriceResults implements Serializable {
         Double demandMetric,
         Double competitorPrice,
         Double inventoryLevel,
-        Double modelPrediction
+        BigDecimal modelPrediction
     ) {
         this.id = id;
         this.productId = productId;
@@ -196,14 +196,14 @@ public class ProductPriceResults implements Serializable {
     /**
      * Getter for <code>public.product_price_results.model_prediction</code>.
      */
-    public Double getModelPrediction() {
+    public BigDecimal getModelPrediction() {
         return this.modelPrediction;
     }
 
     /**
      * Setter for <code>public.product_price_results.model_prediction</code>.
      */
-    public void setModelPrediction(Double modelPrediction) {
+    public void setModelPrediction(BigDecimal modelPrediction) {
         this.modelPrediction = modelPrediction;
     }
 

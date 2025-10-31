@@ -102,7 +102,7 @@ public class ProductPriceResults extends TableImpl<ProductPriceResultsRecord> {
     /**
      * The column <code>public.product_price_results.model_prediction</code>.
      */
-    public final TableField<ProductPriceResultsRecord, Double> MODEL_PREDICTION = createField(DSL.name("model_prediction"), SQLDataType.DOUBLE, this, "");
+    public final TableField<ProductPriceResultsRecord, BigDecimal> MODEL_PREDICTION = createField(DSL.name("model_prediction"), SQLDataType.NUMERIC(12, 2), this, "");
 
     private ProductPriceResults(Name alias, Table<ProductPriceResultsRecord> aliased) {
         this(alias, aliased, null);
@@ -215,7 +215,7 @@ public class ProductPriceResults extends TableImpl<ProductPriceResultsRecord> {
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function10<? super Long, ? super String, ? super String, ? super BigDecimal, ? super String, ? super LocalDateTime, ? super Double, ? super Double, ? super Double, ? super Double, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function10<? super Long, ? super String, ? super String, ? super BigDecimal, ? super String, ? super LocalDateTime, ? super Double, ? super Double, ? super Double, ? super BigDecimal, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -223,7 +223,7 @@ public class ProductPriceResults extends TableImpl<ProductPriceResultsRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function10<? super Long, ? super String, ? super String, ? super BigDecimal, ? super String, ? super LocalDateTime, ? super Double, ? super Double, ? super Double, ? super Double, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function10<? super Long, ? super String, ? super String, ? super BigDecimal, ? super String, ? super LocalDateTime, ? super Double, ? super Double, ? super Double, ? super BigDecimal, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

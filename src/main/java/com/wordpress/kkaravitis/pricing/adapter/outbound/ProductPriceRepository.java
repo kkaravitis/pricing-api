@@ -70,21 +70,23 @@ public class ProductPriceRepository {
                           .as("rn"),
 
                     PRODUCT_PRICE_RESULTS.INVENTORY_LEVEL.as("inventory_level"),
-                    PRODUCT_PRICE_RESULTS.DEMAND_METRIC.as("demand_metric")
+                    PRODUCT_PRICE_RESULTS.DEMAND_METRIC.as("demand_metric"),
+                    PRODUCT_PRICE_RESULTS.MODEL_PREDICTION.as("model_prediction")
               )
               .from(PRODUCT_PRICE_RESULTS)
               .where(cond)
               .asTable("t");
 
-        Field<String>          productIdF = t.field("product_id", String.class);
-        Field<String>          productNameF = t.field("product_name", String.class);
-        Field<Long>            idF        = t.field("id", Long.class);
-        Field<LocalDateTime>   tsF        = t.field("timestamp", LocalDateTime.class);
-        Field<BigDecimal>      priceF     = t.field("price", BigDecimal.class);
-        Field<BigDecimal>      prevF      = t.field("prev_price", BigDecimal.class);
-        Field<Integer>         rnF        = t.field("rn", Integer.class);
-        Field<Double>          invl = t.field("inventory_level", Double.class);
-        Field<Double>          demand = t.field("demand_metric", Double.class);
+        Field<String> productIdF = t.field("product_id", String.class);
+        Field<String> productNameF = t.field("product_name", String.class);
+        Field<Long>   idF = t.field("id", Long.class);
+        Field<LocalDateTime> tsF = t.field("timestamp", LocalDateTime.class);
+        Field<BigDecimal> priceF = t.field("price", BigDecimal.class);
+        Field<BigDecimal> prevF = t.field("prev_price", BigDecimal.class);
+        Field<Integer> rnF = t.field("rn", Integer.class);
+        Field<Double> invl = t.field("inventory_level", Double.class);
+        Field<Double> demand = t.field("demand_metric", Double.class);
+        Field<BigDecimal> model_prediction = t.field("model_prediction", BigDecimal.class);
 
         Field<BigDecimal> previousPrice =
               prevF.as("previousPrice");
@@ -112,7 +114,8 @@ public class ProductPriceRepository {
                     priceChangePercent.as("priceChangePercent"),
                     priceChangeLabel.as("priceChangeLabel"),
                     invl.as("inventoryLevel"),
-                    demand.as("demandMetric")
+                    demand.as("demandMetric"),
+                    model_prediction.as("modelPrediction")
                     )
               .from(t)
               .where(rnF.eq(1))
