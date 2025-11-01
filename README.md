@@ -39,7 +39,7 @@ mvn clean install
 
 Build the docker image by executing
 ```bash
-docker build . -t priicing-api:latest
+docker build . -t pricing-api:latest
 ```
 
 Create the pricing-net network
